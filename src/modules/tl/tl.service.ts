@@ -1,52 +1,39 @@
-import argon2 from 'argon2';
-import prisma from '../../db/prisma.js';
+﻿import argon2 from 'argon2';
+import pool from '../../db/pool.js';
 import { ConflictError, NotFoundError } from '../../common/errors.js';
 
 export var TLService = (function() {
   function TLService() {}
 
   TLService.prototype.create = async function(input, createdBy) {
-    var existing = await prisma.user.findUnique({ where: { email: input.email } });
-    if (existing) throw new ConflictError('Email exists');
-    var hash = await argon2.hash(input.password);
-    var tl = await prisma.user.create({
-      data: { email: input.email, passwordHash: hash, name: input.name, department: input.department, role: 'TL' }
-    });
-    await prisma.auditLog.create({ data: { userId: createdBy, action: 'TL_CREATED', resource: 'tl', detail: 'Created TL: ' + tl.name } });
-    return { id: tl.id, name: tl.name, email: tl.email, department: tl.department, role: tl.role };
+    var c = await pool.connect();
+    try {
+      var exists = await c.query("SELECT id FROM users WHERE email = $1", [input.email]);
+      if (exists.rows.length > 0) throw new ConflictError('Email exists');
+      var hash = await argon2.hash(input.password);
+      var result = await c.query("INSERT INTO users (email, password_hash, name, department, role) VALUES ($1,$2,$3,$4,$5) RETURNING id, email, name, department, role", [input.email, hash, input.name, input.department, 'TL']);
+      return result.rows[0];
+    } finally { c.release(); }
   };
 
   TLService.prototype.getAll = async function(page, limit) {
     page = page || 1; limit = limit || 20;
-    var skip = (page - 1) * limit;
-    var tls = await prisma.user.findMany({
-      where: { role: 'TL' },
-      select: { id: true, name: true, email: true, department: true, isActive: true, createdAt: true },
-      skip: skip, take: limit, orderBy: { createdAt: 'desc' }
-    });
-    var total = await prisma.user.count({ where: { role: 'TL' } });
-    return { data: tls, total: total, page: page, limit: limit };
+    var offset = (page - 1) * limit;
+    var c = await pool.connect();
+    try {
+      var result = await c.query("SELECT id, name, email, department, is_active, created_at FROM users WHERE role = 'TL' ORDER BY created_at DESC LIMIT $1 OFFSET $2", [limit, offset]);
+      var count = await c.query("SELECT COUNT(*) FROM users WHERE role = 'TL'");
+      return { data: result.rows, total: parseInt(count.rows[0].count), page: page };
+    } finally { c.release(); }
   };
 
   TLService.prototype.getById = async function(id) {
-    var tl = await prisma.user.findFirst({ where: { id: id, role: 'TL' } });
-    if (!tl) throw new NotFoundError('TL not found');
-    return { id: tl.id, name: tl.name, email: tl.email, department: tl.department, isActive: tl.isActive };
-  };
-
-  TLService.prototype.update = async function(id, input, updatedBy) {
-    var tl = await prisma.user.findFirst({ where: { id: id, role: 'TL' } });
-    if (!tl) throw new NotFoundError('TL not found');
-    var updated = await prisma.user.update({ where: { id: id }, data: input });
-    await prisma.auditLog.create({ data: { userId: updatedBy, action: 'TL_UPDATED', resource: 'tl', detail: 'Updated TL: ' + updated.name } });
-    return { id: updated.id, name: updated.name, email: updated.email, department: updated.department, isActive: updated.isActive };
-  };
-
-  TLService.prototype.delete = async function(id, deletedBy) {
-    var tl = await prisma.user.findFirst({ where: { id: id, role: 'TL' } });
-    if (!tl) throw new NotFoundError('TL not found');
-    await prisma.user.update({ where: { id: id }, data: { isActive: false } });
-    await prisma.auditLog.create({ data: { userId: deletedBy, action: 'TL_DELETED', resource: 'tl', detail: 'Deactivated TL: ' + tl.name } });
+    var c = await pool.connect();
+    try {
+      var result = await c.query("SELECT id, name, email, department, is_active FROM users WHERE id = $1 AND role = 'TL'", [id]);
+      if (result.rows.length === 0) throw new NotFoundError('TL not found');
+      return result.rows[0];
+    } finally { c.release(); }
   };
 
   return TLService;
