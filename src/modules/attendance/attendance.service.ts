@@ -4,7 +4,7 @@ import { BadRequestError } from '../../common/errors.js';
 export var AttendanceService = (function() {
   function AttendanceService() {}
 
-  AttendanceService.prototype.mark = async function(userId, input) {
+  AttendanceService.prototype.mark = async function(userId: any, input: any) {
     var c = await pool.connect();
     try {
       var today = new Date(); today.setHours(0,0,0,0);
@@ -18,7 +18,7 @@ export var AttendanceService = (function() {
     } finally { c.release(); }
   };
 
-  AttendanceService.prototype.getMyAttendance = async function(userId, page, limit) {
+  AttendanceService.prototype.getMyAttendance = async function(userId: any, page: number, limit: number) {
     page = page || 1; limit = limit || 20;
     var offset = (page - 1) * limit;
     var c = await pool.connect();
@@ -28,7 +28,7 @@ export var AttendanceService = (function() {
     } finally { c.release(); }
   };
 
-  AttendanceService.prototype.getTodayStatus = async function(userId) {
+  AttendanceService.prototype.getTodayStatus = async function(userId: any) {
     var c = await pool.connect();
     try {
       var today = new Date(); today.setHours(0,0,0,0);

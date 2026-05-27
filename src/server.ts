@@ -6,7 +6,6 @@ import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
-import csrf from '@fastify/csrf-protection';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import config from './config/index.js';
@@ -31,32 +30,25 @@ var __dirname = path.dirname(__filename);
 
 async function buildApp() {
   var app = Fastify({
-    logger: { level: config.NODE_ENV === 'production' ? 'info' : 'debug', transport: config.NODE_ENV !== 'production' ? { target: 'pino-pretty' } : undefined },
-    bodyLimit: securityConfig.maxBodySize,
-    requestIdHeader: 'x-request-id',
-    genReqId: function() { return 'req-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9); }
+    logger: { level: 'debug', transport: { target: 'pino-pretty' } },
+    bodyLimit: securityConfig.maxBodySize
   });
 
   app.addHook('onRequest', correlationId);
   await app.register(fastifyStatic, { root: path.join(__dirname, '..', 'public'), prefix: '/' });
   await app.register(helmet, { contentSecurityPolicy: false });
-  await app.register(cors, securityConfig.cors);
-  await app.register(rateLimit, { global: true, max: securityConfig.rateLimit.global.max, timeWindow: securityConfig.rateLimit.global.timeWindow });
+  await app.register(cors, { origin: true, credentials: true });
+  await app.register(rateLimit, { max: 200, timeWindow: '1 minute' });
   await app.register(cookie, { secret: config.CSRF_SECRET });
-  
-  try { await app.register(csrf, { cookieOpts: { httpOnly: true, sameSite: 'strict' } }); } catch(e) {}
-
-  await app.register(swagger, {
-    openapi: {
-      info: {
-        title: 'TL Management API',
-        version: '4.0.0',
-        description: 'Enterprise-grade backend with military-grade security - MFA, API Keys, PoW, ZKP, Canary Tokens, Anomaly Detection, Audit Chain'
-      }
-    }
-  });
+  await app.register(swagger, { openapi: { info: { title: 'TL Management API', version: '4.0.0' } } });
   await app.register(swaggerUi, { routePrefix: '/docs' });
   app.setErrorHandler(errorHandler);
+
+  // Add content type parser for empty body
+  app.addContentTypeParser('application/json', { parseAs: 'string' }, function(req: any, body: string, done: any) {
+    try { done(null, body ? JSON.parse(body) : {}); }
+    catch(e) { done(null, {}); }
+  });
 
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
   await app.register(mfaRoutes, { prefix: '/api/v1/mfa' });
@@ -68,28 +60,11 @@ async function buildApp() {
   await app.register(auditRoutes, { prefix: '/api/v1/audit' });
 
   app.get('/api/v1/postman', async function(req: any, reply: any) { return generatePostmanCollection(); });
-
   app.get('/api/v1/health', async function() {
-    var poolStats = getPoolStats();
-    return {
-      status: 'ok',
-      version: '4.0.0',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      memory: {
-        heapUsedMB: Math.round(process.memoryUsage().heapUsed / 1024 / 1024 * 100) / 100,
-        heapTotalMB: Math.round(process.memoryUsage().heapTotal / 1024 / 1024 * 100) / 100,
-        rssMB: Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100
-      },
-      database: { provider: 'Neon PostgreSQL', region: 'ap-southeast-1 (AWS)', pool: poolStats },
-      features: ['MFA/TOTP','API Keys','Audit Chain','Brute Force','Refresh Rotation','Password Reset','Proof of Work','Idempotency','Circuit Breaker','Leaky Bucket','Correlation IDs','Request Signing','Quantum KEM','Canary Tokens','Anomaly Detection','ZKP','Tokenization']
-    };
+    return { status: 'ok', db: 'Neon PostgreSQL', timestamp: new Date().toISOString() };
   });
 
   app.addHook('onClose', async function() { await disconnectDB(); });
-  process.on('SIGTERM', async function() { await app.close(); process.exit(0); });
-  process.on('SIGINT', async function() { await app.close(); process.exit(0); });
-
   await connectDB();
   await upgrade();
   await seed();
@@ -98,11 +73,7 @@ async function buildApp() {
 
 async function start() {
   var app = await buildApp();
-  try {
-    await app.listen({ port: config.PORT, host: '0.0.0.0' });
-    console.log('Server: http://localhost:' + config.PORT);
-    console.log('Dashboard: http://localhost:' + config.PORT);
-    console.log('Docs: http://localhost:' + config.PORT + '/docs');
-  } catch(err) { app.log.error(err); process.exit(1); }
+  try { await app.listen({ port: config.PORT, host: '0.0.0.0' }); console.log('Server: http://localhost:' + config.PORT); }
+  catch(err) { console.error(err); process.exit(1); }
 }
 start();
