@@ -6,287 +6,188 @@
 <title>TL Management System</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: system-ui, sans-serif; background: #f1f5f9; color: #1e293b; }
-nav { background: #1e293b; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-nav h1 { font-size: 20px; }
-nav a { color: #93c5fd; text-decoration: none; cursor: pointer; margin-left: 10px; }
-nav a:hover { color: white; }
-.container { max-width: 900px; margin: 0 auto; padding: 20px; }
-.card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-.card h2 { font-size: 16px; margin-bottom: 12px; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f0f2f5; color: #1a1a2e; }
+nav { background: #1a1a2e; color: #fff; padding: 0 20px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+nav h1 { font-size: 18px; font-weight: 700; }
+nav .nav-right { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+nav a { color: #93c5fd; cursor: pointer; text-decoration: none; }
+nav a:hover { color: #fff; }
+.container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.card h2 { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #1a1a2e; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat { background: #fff; padding: 16px; border-radius: 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.stat .num { font-size: 28px; font-weight: 800; color: #3b82f6; }
+.stat .lbl { font-size: 11px; color: #64748b; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.stat { background: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-.stat h3 { font-size: 24px; color: #3b82f6; }
-.stat p { font-size: 12px; color: #64748b; margin-top: 4px; }
-.btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
-.btn-blue { background: #3b82f6; color: white; }
-.btn-green { background: #22c55e; color: white; }
-.btn-red { background: #ef4444; color: white; }
-.btn-gray { background: #e2e8f0; color: #1e293b; }
+.btn { display: inline-block; padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.15s; }
+.btn-p { background: #3b82f6; color: #fff; }
+.btn-p:hover { background: #2563eb; }
+.btn-g { background: #10b981; color: #fff; }
+.btn-g:hover { background: #059669; }
+.btn-r { background: #ef4444; color: #fff; }
+.btn-o { background: #fff; color: #3b82f6; border: 1px solid #3b82f6; }
+.btn-o:hover { background: #eff6ff; }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-th { background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; }
-.badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-.bg-green { background: #dcfce7; color: #166534; }
-.bg-red { background: #fef2f2; color: #991b1b; }
-.bg-yellow { background: #fef3c7; color: #92400e; }
-.form-group { margin-bottom: 12px; }
-.form-group label { display: block; margin-bottom: 4px; font-size: 12px; color: #64748b; font-weight: 600; }
-.form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.hidden { display: none; }
-.alert { padding: 10px; border-radius: 6px; margin: 10px 0; font-size: 13px; }
-.alert-ok { background: #dcfce7; color: #166534; }
-.alert-err { background: #fef2f2; color: #991b1b; }
-.tabs { display: flex; gap: 2px; margin-bottom: 16px; flex-wrap: wrap; }
-.tab { padding: 8px 14px; border: none; background: #e2e8f0; cursor: pointer; font-size: 13px; border-radius: 6px 6px 0 0; }
-.tab.active { background: #3b82f6; color: white; }
-.empty { text-align: center; padding: 20px; color: #94a3b8; font-size: 13px; }
-.modal-bg { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 99; justify-content: center; align-items: center; }
-.modal-bg.show { display: flex; }
-@media (max-width: 600px) { .grid2, .grid3, .form-row { grid-template-columns: 1fr; } }
+th { text-align: left; padding: 10px 12px; background: #f8fafc; color: #64748b; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; }
+td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+tr:hover { background: #f8fafc; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.bg-g { background: #dcfce7; color: #166534; }
+.bg-r { background: #fef2f2; color: #991b1b; }
+.bg-y { background: #fef3c7; color: #92400e; }
+.bg-b { background: #dbeafe; color: #1e40af; }
+.fg { margin-bottom: 12px; }
+.fg label { display: block; font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 4px; text-transform: uppercase; }
+.fg input, .fg select { width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; background: #f8fafc; }
+.fg input:focus, .fg select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+.fr { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hide { display: none !important; }
+.msg { padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-top: 8px; }
+.msg-ok { background: #dcfce7; color: #166534; }
+.msg-err { background: #fef2f2; color: #991b1b; }
+.tabs { display: flex; gap: 0; margin-bottom: 0; border-bottom: 2px solid #e2e8f0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tab { padding: 10px 14px; border: none; background: none; cursor: pointer; font-size: 12px; font-weight: 600; color: #64748b; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+.tab.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+.empty { text-align: center; padding: 30px; color: #94a3b8; font-size: 13px; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+.modal.show { display: flex; }
+.modal .card { width: 100%; max-width: 400px; }
+.page { display: none; }
+.page.active { display: block; }
+@media (max-width: 768px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .fr { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  table { font-size: 11px; }
+  th, td { padding: 8px 6px; }
+  nav h1 { font-size: 15px; }
+  .container { padding: 10px; }
+  .card { padding: 14px; }
+}
+@media (max-width: 400px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat .num { font-size: 22px; }
+}
 </style>
 </head>
 <body>
 
 <nav>
   <h1>TL Management</h1>
-  <div id="nav-area"><a onclick="showLogin()">Login</a></div>
+  <div class="nav-right" id="nav-area"><a onclick="showPg('login')">Login</a></div>
 </nav>
 
 <div class="container">
-  <div id="pg-login">
-    <div style="max-width:380px;margin:30px auto">
-      <div class="card">
-        <h2>Login</h2>
-        <div class="form-group"><label>Email</label><input type="email" id="login-email" value="admin@company.com"></div>
-        <div class="form-group"><label>Password</label><input type="password" id="login-password" value="NewPass@123!"></div>
-        <button class="btn btn-blue" onclick="doLogin()" style="width:100%">Sign In</button>
-        <p id="login-err" style="color:red;margin-top:8px;font-size:13px"></p>
-        <p style="margin-top:12px;text-align:center;font-size:13px"><a onclick="showReg()" style="color:#3b82f6;cursor:pointer">Register</a></p>
-        <div style="margin-top:12px;padding:10px;background:#f8fafc;border-radius:6px;font-size:11px;color:#64748b">
-          Demo: admin@company.com / NewPass@123!
-        </div>
-      </div>
+
+  <!-- LOGIN -->
+  <div id="pg-login" class="page active">
+    <div class="card" style="max-width:380px;margin:30px auto">
+      <h2 style="text-align:center">Sign In</h2>
+      <div class="fg"><label>Email</label><input type="email" id="lemail" value="admin@company.com"></div>
+      <div class="fg"><label>Password</label><input type="password" id="lpass" value="NewPass@123!"></div>
+      <button class="btn btn-p" onclick="login()" style="width:100%">Sign In</button>
+      <p id="lerr" style="color:#ef4444;font-size:12px;margin-top:8px;text-align:center"></p>
+      <p style="text-align:center;margin-top:12px;font-size:12px"><a onclick="showPg('register')" style="color:#3b82f6;cursor:pointer">Create Account</a></p>
     </div>
   </div>
 
-  <div id="pg-register" class="hidden">
-    <div style="max-width:380px;margin:30px auto">
-      <div class="card"><h2>Register</h2>
-        <div class="form-group"><label>Name</label><input type="text" id="reg-name"></div>
-        <div class="form-group"><label>Email</label><input type="email" id="reg-email"></div>
-        <div class="form-group"><label>Password</label><input type="password" id="reg-password"></div>
-        <button class="btn btn-green" onclick="doRegister()" style="width:100%">Create</button>
-        <p style="margin-top:12px;text-align:center"><a onclick="showLogin()" style="color:#3b82f6;cursor:pointer">Back</a></p>
-      </div>
+  <!-- REGISTER -->
+  <div id="pg-register" class="page">
+    <div class="card" style="max-width:380px;margin:30px auto">
+      <h2 style="text-align:center">Register</h2>
+      <div class="fg"><label>Name</label><input type="text" id="rname"></div>
+      <div class="fg"><label>Email</label><input type="email" id="remail"></div>
+      <div class="fg"><label>Password</label><input type="password" id="rpass"></div>
+      <button class="btn btn-g" onclick="register()" style="width:100%">Create</button>
+      <p style="text-align:center;margin-top:12px;font-size:12px"><a onclick="showPg('login')" style="color:#3b82f6;cursor:pointer">Back to Login</a></p>
     </div>
   </div>
 
-  <div id="pg-dashboard" class="hidden">
-    <div class="grid3" style="margin-bottom:16px">
-      <div class="stat"><h3 id="s-tls">-</h3><p>Team Leads</p></div>
-      <div class="stat"><h3 id="s-att">-</h3><p>Attendance</p></div>
-      <div class="stat"><h3 id="s-rate">-</h3><p>Ratings</p></div>
+  <!-- DASHBOARD -->
+  <div id="pg-dash" class="page">
+    <div class="stats">
+      <div class="stat"><div class="num" id="sn-tls">0</div><div class="lbl">Team Leads</div></div>
+      <div class="stat"><div class="num" id="sn-att">0</div><div class="lbl">Attendance</div></div>
+      <div class="stat"><div class="num" id="sn-rate">0</div><div class="lbl">Ratings</div></div>
+      <div class="stat"><div class="num" id="sn-audit">0</div><div class="lbl">Audit Logs</div></div>
     </div>
 
     <div class="grid2">
-      <div class="card"><h2>Mark Attendance</h2>
-        <div class="form-group"><select id="att-status"><option value="PRESENT">Present</option><option value="ABSENT">Absent</option><option value="LEAVE">Leave</option><option value="HALF_DAY">Half Day</option></select></div>
-        <button class="btn btn-green" onclick="markAtt()">Mark</button>
-        <p id="att-msg"></p>
+      <div class="card">
+        <h2>Mark Attendance</h2>
+        <div class="fg"><select id="mk-status"><option value="PRESENT">Present</option><option value="ABSENT">Absent</option><option value="LEAVE">Leave</option><option value="HALF_DAY">Half Day</option></select></div>
+        <button class="btn btn-g" onclick="markAtt()">Mark</button>
+        <div id="mk-msg"></div>
       </div>
-      <div class="card"><h2>Give Rating</h2>
-        <div class="form-row">
-          <div class="form-group"><label>Employee ID</label><input type="number" id="rate-emp" placeholder="e.g. 3"></div>
-          <div class="form-group"><label>Score</label><input type="number" id="rate-score" value="8" min="1" max="10"></div>
+      <div class="card">
+        <h2>Give Rating</h2>
+        <div class="fr">
+          <div class="fg"><label>Emp ID</label><input type="number" id="r-emp" placeholder="e.g. 3"></div>
+          <div class="fg"><label>Score</label><input type="number" id="r-score" value="8" min="1" max="10"></div>
         </div>
-        <div class="form-group"><label>Month</label><input type="text" id="rate-month" value="2026-05"></div>
-        <button class="btn btn-blue" onclick="doRating()">Submit</button>
-        <p id="rate-msg"></p>
+        <div class="fg"><label>Month</label><input type="text" id="r-month" value="2026-05"></div>
+        <button class="btn btn-p" onclick="doRate()">Submit Rating</button>
+        <div id="r-msg"></div>
       </div>
     </div>
 
     <div class="tabs" style="margin-top:16px">
-      <button class="tab active" onclick="switchTab('tls')">TLs</button>
-      <button class="tab" onclick="switchTab('att')">Attendance</button>
-      <button class="tab" onclick="switchTab('rate')">Ratings</button>
-      <button class="tab" onclick="switchTab('audit')">Audit</button>
-      <button class="tab" onclick="switchTab('keys')">API Keys</button>
+      <button class="tab active" onclick="tab('tls')">Team Leads</button>
+      <button class="tab" onclick="tab('att')">Attendance</button>
+      <button class="tab" onclick="tab('rate')">Ratings</button>
+      <button class="tab" onclick="tab('audit')">Audit Logs</button>
+      <button class="tab" onclick="tab('keys')">API Keys</button>
     </div>
 
-    <div id="tab-tls" class="card"><div style="display:flex;justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">Team Leads</h2><button class="btn btn-blue" onclick="openTL()">+ Add TL</button></div><div id="tls-data">Loading...</div></div>
-    <div id="tab-att" class="card hidden"><h2>Attendance</h2><div id="att-data">Loading...</div></div>
-    <div id="tab-rate" class="card hidden"><h2>Ratings</h2><div id="rate-data">Loading...</div></div>
-    <div id="tab-audit" class="card hidden"><h2>Audit Logs</h2><div id="audit-data">Loading...</div></div>
-    <div id="tab-keys" class="card hidden"><div style="display:flex;justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">API Keys</h2><button class="btn btn-blue" onclick="createKey()">+ Generate</button></div><div id="keys-data">Loading...</div></div>
+    <div id="tb-tls" class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px"><h2 style="margin:0">Team Leads</h2><button class="btn btn-p btn-sm" onclick="mdl('tl-modal')">+ Add TL</button></div><div id="dt-tls">Loading...</div></div>
+    <div id="tb-att" class="card hide"><h2>Attendance History</h2><div id="dt-att">Loading...</div></div>
+    <div id="tb-rate" class="card hide"><h2>My Ratings</h2><div id="dt-rate">Loading...</div></div>
+    <div id="tb-audit" class="card hide"><h2>Audit Logs</h2><div id="dt-audit">Loading...</div></div>
+    <div id="tb-keys" class="card hide"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px"><h2 style="margin:0">API Keys</h2><button class="btn btn-p btn-sm" onclick="newKey()">+ Generate</button></div><div id="dt-keys">Loading...</div></div>
   </div>
 </div>
 
-<div id="tl-modal" class="modal-bg">
-  <div class="card" style="width:380px"><h2>Add Team Lead</h2>
-    <div class="form-group"><label>Name</label><input type="text" id="tl-name"></div>
-    <div class="form-group"><label>Email</label><input type="email" id="tl-email"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="tl-password"></div>
-    <div class="form-group"><label>Department</label><input type="text" id="tl-dept"></div>
-    <button class="btn btn-green" onclick="addTL()">Create</button>
-    <button class="btn btn-gray" onclick="closeTL()" style="margin-left:8px">Cancel</button>
+<!-- TL MODAL -->
+<div class="modal" id="tl-modal">
+  <div class="card"><h2>Add Team Lead</h2>
+    <div class="fg"><label>Name</label><input type="text" id="tl-name"></div>
+    <div class="fg"><label>Email</label><input type="email" id="tl-email"></div>
+    <div class="fg"><label>Password</label><input type="password" id="tl-pass"></div>
+    <div class="fg"><label>Department</label><input type="text" id="tl-dept"></div>
+    <button class="btn btn-g" onclick="addTL()">Create</button>
+    <button class="btn btn-o" onclick="mdl('tl-modal')" style="margin-left:8px">Cancel</button>
   </div>
 </div>
 
 <script>
-var API = '/api/v1';
-var user = null;
+var A='/api/v1',U=null;
+function api(m,p,b){var o={method:m,credentials:'include'};if(b){o.headers={'Content-Type':'application/json'};o.body=JSON.stringify(b);}return fetch(A+p,o).then(function(r){return r.json();});}
+function showPg(p){document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});document.getElementById('pg-'+p).classList.add('active');}
+function mdl(id){var e=document.getElementById(id);e.classList.toggle('show');}
+function tab(t){document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});event.target.classList.add('active');document.querySelectorAll('[id^="tb-"]').forEach(function(x){x.classList.add('hide');});document.getElementById('tb-'+t).classList.remove('hide');
+if(t==='tls')ldTLs();if(t==='att')ldAtt();if(t==='rate')ldRate();if(t==='audit')ldAudit();if(t==='keys')ldKeys();}
 
-async function api(method, path, body) {
-  var opts = { method: method, credentials: 'include' as RequestCredentials };
-  if (body) { opts.headers = { 'Content-Type': 'application/json' }; opts.body = JSON.stringify(body); }
-  var res = await fetch(API + path, opts);
-  return res.json();
-}
+async function login(){var d=await api('POST','/auth/login',{email:gei('lemail'),password:gei('lpass')});if(d.success){U=d.data.user;document.getElementById('nav-area').innerHTML='<span style="font-size:12px">'+U.email+'</span> <a onclick="logout()">Logout</a>';showPg('dash');ldAll();}else{gei('lerr').textContent=d.message||'Failed';}}
+async function register(){var d=await api('POST','/auth/register',{name:gei('rname'),email:gei('remail'),password:gei('rpass')});if(d.success){alert('Created! Login now.');showPg('login');}else{alert(d.message||'Failed');}}
+async function logout(){await api('POST','/auth/logout');U=null;document.getElementById('nav-area').innerHTML='<a onclick="showPg(\'login\')">Login</a>';showPg('login');}
+function gei(id){return document.getElementById(id).value;}
+function tbl(r,c){var h='<table><tr>';c.forEach(function(x){h+='<th>'+x+'</th>';});h+='</tr>';if(!r||r.length===0)h+='<tr><td colspan="'+c.length+'" class="empty">No data</td></tr>';else r.forEach(function(x){h+='<tr>';c.forEach(function(k){h+='<td>'+(x[k]||'-')+'</td>';});h+='</tr>';});h+='</table>';return h;}
 
-function showLogin() {
-  document.getElementById('pg-login').classList.remove('hidden');
-  document.getElementById('pg-register').classList.add('hidden');
-  document.getElementById('pg-dashboard').classList.add('hidden');
-}
-function showReg() {
-  document.getElementById('pg-login').classList.add('hidden');
-  document.getElementById('pg-register').classList.remove('hidden');
-  document.getElementById('pg-dashboard').classList.add('hidden');
-}
-function showDash() {
-  document.getElementById('pg-login').classList.add('hidden');
-  document.getElementById('pg-register').classList.add('hidden');
-  document.getElementById('pg-dashboard').classList.remove('hidden');
-}
+async function ldAll(){var t=await api('GET','/tls');gei('sn-tls').textContent=(t.data||[]).length;var a=await api('GET','/attendance/my');gei('sn-att').textContent=(a.data||[]).length;var r=await api('GET','/ratings/my');gei('sn-rate').textContent=(r.data||[]).length;var ad=await api('GET','/audit/logs');gei('sn-audit').textContent=(ad.data||[]).length;ldTLs();}
+async function ldTLs(){var d=await api('GET','/tls');var r=(d.data||[]).map(function(t){return{id:t.id,name:t.name,email:t.email,dept:t.department||'-',st:t.is_active?'<span class="badge bg-g">Active</span>':'<span class="badge bg-r">Inactive</span>'};});gei('dt-tls').innerHTML=tbl(r,['id','name','email','dept','st']);}
+async function ldAtt(){var d=await api('GET','/attendance/my');var r=(d.data||[]).map(function(a){return{date:new Date(a.date).toLocaleDateString(),status:a.status,late:a.is_late?'<span class="badge bg-y">Late</span>':'<span class="badge bg-g">On Time</span>'};});gei('dt-att').innerHTML=tbl(r,['date','status','late']);}
+async function ldRate(){var d=await api('GET','/ratings/my');var r=(d.data||[]).map(function(x){return{month:x.month,score:x.score+'/10'};});gei('dt-rate').innerHTML=tbl(r,['month','score']);}
+async function ldAudit(){var d=await api('GET','/audit/logs');var r=(d.data||[]).slice(0,30).map(function(a){return{action:a.action,detail:(a.detail||'').substring(0,50),time:new Date(a.created_at).toLocaleString()};});gei('dt-audit').innerHTML=tbl(r,['action','detail','time']);}
+async function ldKeys(){var d=await api('GET','/api-keys');var r=(d.data||[]).map(function(k){return{name:k.name,prefix:k.prefix,scopes:k.scopes,st:k.is_active?'<span class="badge bg-g">Active</span>':'<span class="badge bg-r">Revoked</span>'};});gei('dt-keys').innerHTML=tbl(r,['name','prefix','scopes','st']);}
 
-async function doLogin() {
-  var data = await api('POST', '/auth/login', {
-    email: document.getElementById('login-email').value,
-    password: document.getElementById('login-password').value
-  });
-  if (data.success) {
-    user = data.data.user;
-    document.getElementById('nav-area').innerHTML = '<span style="color:white">' + user.email + ' (' + user.role + ')</span> <a onclick="doLogout()">Logout</a>';
-    showDash(); loadAll();
-  } else { document.getElementById('login-err').textContent = data.message || 'Login failed'; }
-}
+async function markAtt(){var d=await api('POST','/attendance/mark',{status:gei('mk-status')});gei('mk-msg').innerHTML=d.success?'<div class="msg msg-ok">Marked!</div>':'<div class="msg msg-err">'+d.message+'</div>';if(d.success){ldAtt();ldAll();}}
+async function doRate(){var d=await api('POST','/ratings',{userId:gei('r-emp'),month:gei('r-month'),score:parseInt(gei('r-score'))});gei('r-msg').innerHTML=d.success?'<div class="msg msg-ok">Rated!</div>':'<div class="msg msg-err">'+(d.message||'Error')+'</div>';if(d.success){ldRate();ldAll();}}
+async function addTL(){var d=await api('POST','/tls',{name:gei('tl-name'),email:gei('tl-email'),password:gei('tl-pass'),department:gei('tl-dept')});if(d.success){mdl('tl-modal');ldTLs();ldAll();}else{alert(d.message||'Failed');}}
+async function newKey(){var n=prompt('Key name:','My Key');if(!n)return;var d=await api('POST','/api-keys',{name:n,scopes:'read,write'});if(d.success){alert('Key: '+d.data.key);ldKeys();}}
 
-async function doRegister() {
-  var data = await api('POST', '/auth/register', {
-    name: document.getElementById('reg-name').value,
-    email: document.getElementById('reg-email').value,
-    password: document.getElementById('reg-password').value
-  });
-  if (data.success) { alert('Registered! Login now.'); showLogin(); }
-  else { alert(data.message || 'Failed'); }
-}
-
-async function doLogout() {
-  await api('POST', '/auth/logout');
-  user = null; document.getElementById('nav-area').innerHTML = '<a onclick="showLogin()">Login</a>';
-  showLogin();
-}
-
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
-  event.target.classList.add('active');
-  ['tls','att','rate','audit','keys'].forEach(function(t) { document.getElementById('tab-'+t).classList.add('hidden'); });
-  document.getElementById('tab-'+tab).classList.remove('hidden');
-  if (tab === 'tls') loadTLs();
-  if (tab === 'att') loadAtt();
-  if (tab === 'rate') loadRate();
-  if (tab === 'audit') loadAudit();
-  if (tab === 'keys') loadKeys();
-}
-
-async function loadAll() {
-  var t = await api('GET', '/tls'); document.getElementById('s-tls').textContent = (t.data||[]).length;
-  var a = await api('GET', '/attendance/my'); document.getElementById('s-att').textContent = (a.data||[]).length;
-  var r = await api('GET', '/ratings/my'); document.getElementById('s-rate').textContent = (r.data||[]).length;
-  loadTLs();
-}
-
-function tbl(rows, cols) {
-  var h = '<table><tr>';
-  cols.forEach(function(c) { h += '<th>' + c + '</th>'; });
-  h += '</tr>';
-  if (!rows || rows.length === 0) h += '<tr><td colspan="' + cols.length + '" class="empty">No data</td></tr>';
-  else rows.forEach(function(r) { h += '<tr>'; cols.forEach(function(c) { h += '<td>' + (r[c]||'-') + '</td>'; }); h += '</tr>'; });
-  h += '</table>';
-  return h;
-}
-
-async function loadTLs() {
-  var d = await api('GET', '/tls');
-  var rows = (d.data||[]).map(function(t) { return { id: t.id, name: t.name, email: t.email, dept: t.department||'-', status: t.is_active?'<span class="badge bg-green">Active</span>':'<span class="badge bg-red">Inactive</span>' }; });
-  document.getElementById('tls-data').innerHTML = tbl(rows, ['id','name','email','dept','status']);
-}
-
-async function loadAtt() {
-  var d = await api('GET', '/attendance/my');
-  var rows = (d.data||[]).map(function(a) { return { date: new Date(a.date).toLocaleDateString(), status: a.status, late: a.is_late?'<span class="badge bg-yellow">Late</span>':'<span class="badge bg-green">On Time</span>' }; });
-  document.getElementById('att-data').innerHTML = tbl(rows, ['date','status','late']);
-}
-
-async function loadRate() {
-  var d = await api('GET', '/ratings/my');
-  var rows = (d.data||[]).map(function(r) { return { month: r.month, score: r.score+'/10' }; });
-  document.getElementById('rate-data').innerHTML = tbl(rows, ['month','score']);
-}
-
-async function loadAudit() {
-  var d = await api('GET', '/audit/logs');
-  var rows = (d.data||[]).slice(0,50).map(function(a) { return { action: a.action, resource: a.resource, detail: (a.detail||'').substring(0,60), time: new Date(a.created_at).toLocaleString() }; });
-  document.getElementById('audit-data').innerHTML = tbl(rows, ['action','resource','detail','time']);
-}
-
-async function loadKeys() {
-  var d = await api('GET', '/api-keys');
-  var rows = (d.data||[]).map(function(k) { return { name: k.name, prefix: k.prefix, scopes: k.scopes, status: k.is_active?'<span class="badge bg-green">Active</span>':'<span class="badge bg-red">Revoked</span>' }; });
-  document.getElementById('keys-data').innerHTML = tbl(rows, ['name','prefix','scopes','status']);
-}
-
-async function markAtt() {
-  var data = await api('POST', '/attendance/mark', { status: document.getElementById('att-status').value });
-  document.getElementById('att-msg').innerHTML = data.success ? '<div class="alert alert-ok">Marked!</div>' : '<div class="alert alert-err">' + data.message + '</div>';
-  if (data.success) { loadAtt(); loadAll(); }
-}
-
-async function doRating() {
-  var data = await api('POST', '/ratings', {
-    userId: document.getElementById('rate-emp').value,
-    month: document.getElementById('rate-month').value,
-    score: parseInt(document.getElementById('rate-score').value)
-  });
-  document.getElementById('rate-msg').innerHTML = data.success ? '<div class="alert alert-ok">Rated!</div>' : '<div class="alert alert-err">' + (data.message || 'Error') + '</div>';
-  if (data.success) { loadRate(); loadAll(); }
-}
-
-function openTL() { document.getElementById('tl-modal').classList.add('show'); }
-function closeTL() { document.getElementById('tl-modal').classList.remove('show'); }
-
-async function addTL() {
-  var data = await api('POST', '/tls', {
-    name: document.getElementById('tl-name').value,
-    email: document.getElementById('tl-email').value,
-    password: document.getElementById('tl-password').value,
-    department: document.getElementById('tl-dept').value
-  });
-  if (data.success) { closeTL(); loadTLs(); loadAll(); }
-  else { alert(data.message || 'Failed'); }
-}
-
-async function createKey() {
-  var name = prompt('Key name:', 'My Key');
-  if (!name) return;
-  var data = await api('POST', '/api-keys', { name: name, scopes: 'read,write' });
-  if (data.success) { alert('Key: ' + data.data.key); loadKeys(); }
-}
-
-showLogin();
+showPg('login');
 </script>
 </body>
 </html>
