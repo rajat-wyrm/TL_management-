@@ -1,4 +1,4 @@
-import Fastify from 'fastify';
+﻿import Fastify from 'fastify';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
@@ -7,8 +7,6 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import config from './config/index.js';
 import { connectDB, disconnectDB } from './db/pool.js';
-import { migrate } from './db/migrate.js';
-import { seed } from './db/seed.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
 
@@ -25,8 +23,6 @@ async function buildApp() {
   app.get('/api/v1/health', async () => ({ status: 'ok', db: 'Neon PostgreSQL' }));
   app.addHook('onClose', async () => { await disconnectDB(); });
   await connectDB();
-  await migrate();
-  await seed();
   return app;
 }
 
