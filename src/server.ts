@@ -3,6 +3,7 @@ import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
+import csrf from '@fastify/csrf-protection';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import config from './config/index.js';
@@ -10,6 +11,7 @@ import { connectDB, disconnectDB } from './db/pool.js';
 import { upgrade } from './db/upgrade.js';
 import { seed } from './db/seed.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { securityConfig } from './utils/security.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { mfaRoutes } from './modules/mfa/mfa.routes.js';
 import { apiKeyRoutes } from './modules/apikeys/apikeys.routes.js';
@@ -19,13 +21,35 @@ import { ratingsRoutes } from './modules/ratings/ratings.routes.js';
 import { auditRoutes } from './modules/audit/audit.routes.js';
 
 async function buildApp() {
-  const app = Fastify({ logger: { level: 'debug', transport: { target: 'pino-pretty' } } });
-  await app.register(helmet);
-  await app.register(cors, { origin: true, credentials: true });
-  await app.register(rateLimit, { max: 100, timeWindow: '1 minute' });
+  var app = Fastify({
+    logger: { level: config.NODE_ENV === 'production' ? 'info' : 'debug', transport: config.NODE_ENV !== 'production' ? { target: 'pino-pretty' } : undefined },
+    bodyLimit: securityConfig.maxBodySize,
+    requestIdHeader: 'x-request-id',
+    genReqId: function() { return 'req-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9); }
+  });
+
+  await app.register(helmet, { contentSecurityPolicy: securityConfig.csp });
+  await app.register(cors, securityConfig.cors);
+  await app.register(csrf, { cookieOpts: { httpOnly: true, sameSite: 'strict' } });
+  
+  await app.register(rateLimit, {
+    global: true,
+    max: securityConfig.rateLimit.global.max,
+    timeWindow: securityConfig.rateLimit.global.timeWindow
+  });
+  
   await app.register(cookie, { secret: config.CSRF_SECRET });
-  await app.register(swagger, { openapi: { info: { title: 'TL Management API', version: '2.0.0', description: 'Enterprise-grade backend with MFA, API Keys, and Tamper-Proof Audit' } } });
+  await app.register(swagger, {
+    openapi: {
+      info: {
+        title: 'TL Management API',
+        version: '2.0.0',
+        description: 'Enterprise-grade backend with MFA, API Keys, Brute Force Protection, Refresh Token Rotation, and Tamper-Proof Audit Chain'
+      }
+    }
+  });
   await app.register(swaggerUi, { routePrefix: '/docs' });
+  
   app.setErrorHandler(errorHandler);
   
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
@@ -36,8 +60,22 @@ async function buildApp() {
   await app.register(ratingsRoutes, { prefix: '/api/v1/ratings' });
   await app.register(auditRoutes, { prefix: '/api/v1/audit' });
   
-  app.get('/api/v1/health', async () => ({ status: 'ok', db: 'Neon PostgreSQL', features: ['MFA/TOTP', 'API Keys', 'Audit Chain'] }));
-  app.addHook('onClose', async () => { await disconnectDB(); });
+  app.get('/api/v1/health', async function() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memory: process.memoryUsage().heapUsed / 1024 / 1024,
+      db: 'Neon PostgreSQL',
+      features: ['MFA/TOTP', 'API Keys', 'Audit Chain', 'Brute Force Protection', 'Refresh Token Rotation', 'Password Reset Flow']
+    };
+  });
+  
+  app.addHook('onClose', async function() { await disconnectDB(); });
+  
+  process.on('SIGTERM', async function() { await app.close(); process.exit(0); });
+  process.on('SIGINT', async function() { await app.close(); process.exit(0); });
+  
   await connectDB();
   await upgrade();
   await seed();
@@ -45,8 +83,11 @@ async function buildApp() {
 }
 
 async function start() {
-  const app = await buildApp();
-  try { await app.listen({ port: config.PORT, host: '0.0.0.0' }); console.log('Server: http://localhost:' + config.PORT); }
-  catch(err) { app.log.error(err); process.exit(1); }
+  var app = await buildApp();
+  try {
+    await app.listen({ port: config.PORT, host: '0.0.0.0' });
+    console.log('Server: http://localhost:' + config.PORT);
+    console.log('Docs: http://localhost:' + config.PORT + '/docs');
+  } catch(err) { app.log.error(err); process.exit(1); }
 }
 start();
