@@ -19,6 +19,7 @@ import { apiKeyRoutes } from './modules/apikeys/apikeys.routes.js';
 import { tlRoutes } from './modules/tl/tl.routes.js';
 import { attendanceRoutes } from './modules/attendance/attendance.routes.js';
 import { ratingsRoutes } from './modules/ratings/ratings.routes.js';
+import { canaryRoutes } from './modules/canary/canary.routes.js';
 import { auditRoutes } from './modules/audit/audit.routes.js';
 
 var __filename = fileURLToPath(import.meta.url);
@@ -41,6 +42,7 @@ async function buildApp() {
   await app.register(tlRoutes, { prefix: '/api/v1/tls' });
   await app.register(attendanceRoutes, { prefix: '/api/v1/attendance' });
   await app.register(ratingsRoutes, { prefix: '/api/v1/ratings' });
+  await app.register(canaryRoutes, { prefix: '/api/v1/canary' });
   await app.register(auditRoutes, { prefix: '/api/v1/audit' });
 
   app.get('/api/v1/health', async function() {
@@ -60,3 +62,4 @@ async function start() {
   catch(err) { console.error(err); process.exit(1); }
 }
 start();
+
