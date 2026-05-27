@@ -6,12 +6,12 @@
 <title>TL Management System</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: system-ui, sans-serif; background: #f8fafc; color: #1e293b; }
-nav { background: #1e293b; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-nav h1 { font-size: 18px; }
-nav span, nav a { color: #94a3b8; margin-left: 12px; cursor: pointer; font-size: 14px; }
+body { font-family: system-ui, sans-serif; background: #f1f5f9; color: #1e293b; }
+nav { background: #1e293b; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+nav h1 { font-size: 20px; }
+nav a { color: #93c5fd; text-decoration: none; cursor: pointer; margin-left: 10px; }
 nav a:hover { color: white; }
-.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
 .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 .card h2 { font-size: 16px; margin-bottom: 12px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -24,10 +24,9 @@ nav a:hover { color: white; }
 .btn-green { background: #22c55e; color: white; }
 .btn-red { background: #ef4444; color: white; }
 .btn-gray { background: #e2e8f0; color: #1e293b; }
-.btn-sm { padding: 5px 10px; font-size: 11px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-th { background: #f1f5f9; color: #64748b; font-size: 11px; text-transform: uppercase; }
+th { background: #f8fafc; color: #64748b; font-size: 11px; text-transform: uppercase; }
 .badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
 .bg-green { background: #dcfce7; color: #166534; }
 .bg-red { background: #fef2f2; color: #991b1b; }
@@ -36,7 +35,7 @@ th { background: #f1f5f9; color: #64748b; font-size: 11px; text-transform: upper
 .form-group label { display: block; margin-bottom: 4px; font-size: 12px; color: #64748b; font-weight: 600; }
 .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.hidden { display: none !important; }
+.hidden { display: none; }
 .alert { padding: 10px; border-radius: 6px; margin: 10px 0; font-size: 13px; }
 .alert-ok { background: #dcfce7; color: #166534; }
 .alert-err { background: #fef2f2; color: #991b1b; }
@@ -46,11 +45,7 @@ th { background: #f1f5f9; color: #64748b; font-size: 11px; text-transform: upper
 .empty { text-align: center; padding: 20px; color: #94a3b8; font-size: 13px; }
 .modal-bg { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 99; justify-content: center; align-items: center; }
 .modal-bg.show { display: flex; }
-@media (max-width: 600px) {
-  .grid2, .grid3, .form-row { grid-template-columns: 1fr; }
-  table { font-size: 11px; }
-  th, td { padding: 6px; }
-}
+@media (max-width: 600px) { .grid2, .grid3, .form-row { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -61,8 +56,6 @@ th { background: #f1f5f9; color: #64748b; font-size: 11px; text-transform: upper
 </nav>
 
 <div class="container">
-
-  <!-- LOGIN -->
   <div id="pg-login">
     <div style="max-width:380px;margin:30px auto">
       <div class="card">
@@ -72,89 +65,73 @@ th { background: #f1f5f9; color: #64748b; font-size: 11px; text-transform: upper
         <button class="btn btn-blue" onclick="doLogin()" style="width:100%">Sign In</button>
         <p id="login-err" style="color:red;margin-top:8px;font-size:13px"></p>
         <p style="margin-top:12px;text-align:center;font-size:13px"><a onclick="showReg()" style="color:#3b82f6;cursor:pointer">Register</a></p>
+        <div style="margin-top:12px;padding:10px;background:#f8fafc;border-radius:6px;font-size:11px;color:#64748b">
+          Demo: admin@company.com / NewPass@123!
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- REGISTER -->
   <div id="pg-register" class="hidden">
     <div style="max-width:380px;margin:30px auto">
-      <div class="card">
-        <h2>Register</h2>
+      <div class="card"><h2>Register</h2>
         <div class="form-group"><label>Name</label><input type="text" id="reg-name"></div>
         <div class="form-group"><label>Email</label><input type="email" id="reg-email"></div>
         <div class="form-group"><label>Password</label><input type="password" id="reg-password"></div>
-        <button class="btn btn-green" onclick="doRegister()" style="width:100%">Create Account</button>
-        <p style="margin-top:12px;text-align:center;font-size:13px"><a onclick="showLogin()" style="color:#3b82f6;cursor:pointer">Back to Login</a></p>
+        <button class="btn btn-green" onclick="doRegister()" style="width:100%">Create</button>
+        <p style="margin-top:12px;text-align:center"><a onclick="showLogin()" style="color:#3b82f6;cursor:pointer">Back</a></p>
       </div>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
   <div id="pg-dashboard" class="hidden">
     <div class="grid3" style="margin-bottom:16px">
-      <div class="stat"><h3 id="s-tls">0</h3><p>Team Leads</p></div>
-      <div class="stat"><h3 id="s-att">0</h3><p>Attendance</p></div>
-      <div class="stat"><h3 id="s-rate">0</h3><p>Ratings</p></div>
+      <div class="stat"><h3 id="s-tls">-</h3><p>Team Leads</p></div>
+      <div class="stat"><h3 id="s-att">-</h3><p>Attendance</p></div>
+      <div class="stat"><h3 id="s-rate">-</h3><p>Ratings</p></div>
     </div>
 
     <div class="grid2">
-      <div class="card">
-        <h2>Mark Attendance</h2>
+      <div class="card"><h2>Mark Attendance</h2>
         <div class="form-group"><select id="att-status"><option value="PRESENT">Present</option><option value="ABSENT">Absent</option><option value="LEAVE">Leave</option><option value="HALF_DAY">Half Day</option></select></div>
         <button class="btn btn-green" onclick="markAtt()">Mark</button>
         <p id="att-msg"></p>
       </div>
-      <div class="card">
-        <h2>Give Rating</h2>
+      <div class="card"><h2>Give Rating</h2>
         <div class="form-row">
-          <div class="form-group"><label>Employee ID</label><input type="number" id="rate-emp"></div>
-          <div class="form-group"><label>Score 1-10</label><input type="number" id="rate-score" value="8" min="1" max="10"></div>
+          <div class="form-group"><label>Employee ID</label><input type="number" id="rate-emp" placeholder="e.g. 3"></div>
+          <div class="form-group"><label>Score</label><input type="number" id="rate-score" value="8" min="1" max="10"></div>
         </div>
-        <div class="form-group"><label>Month (YYYY-MM)</label><input type="text" id="rate-month" value="2026-05"></div>
-        <button class="btn btn-blue" onclick="doRating()">Submit Rating</button>
+        <div class="form-group"><label>Month</label><input type="text" id="rate-month" value="2026-05"></div>
+        <button class="btn btn-blue" onclick="doRating()">Submit</button>
         <p id="rate-msg"></p>
       </div>
     </div>
 
     <div class="tabs" style="margin-top:16px">
-      <button class="tab active" onclick="switchTab('tls')">Team Leads</button>
+      <button class="tab active" onclick="switchTab('tls')">TLs</button>
       <button class="tab" onclick="switchTab('att')">Attendance</button>
       <button class="tab" onclick="switchTab('rate')">Ratings</button>
-      <button class="tab" onclick="switchTab('audit')">Audit Logs</button>
+      <button class="tab" onclick="switchTab('audit')">Audit</button>
       <button class="tab" onclick="switchTab('keys')">API Keys</button>
     </div>
 
-    <div id="tab-tls" class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-        <h2 style="margin:0">Team Leads</h2>
-        <button class="btn btn-blue btn-sm" onclick="openTLModal()">Add TL</button>
-      </div>
-      <div id="tls-data"></div>
-    </div>
-    <div id="tab-att" class="card hidden"><h2>Attendance History</h2><div id="att-data"></div></div>
-    <div id="tab-rate" class="card hidden"><h2>My Ratings</h2><div id="rate-data"></div></div>
-    <div id="tab-audit" class="card hidden"><h2>Audit Logs</h2><div id="audit-data"></div></div>
-    <div id="tab-keys" class="card hidden">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-        <h2 style="margin:0">API Keys</h2>
-        <button class="btn btn-blue btn-sm" onclick="createKey()">Generate Key</button>
-      </div>
-      <div id="keys-data"></div>
-    </div>
+    <div id="tab-tls" class="card"><div style="display:flex;justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">Team Leads</h2><button class="btn btn-blue" onclick="openTL()">+ Add TL</button></div><div id="tls-data">Loading...</div></div>
+    <div id="tab-att" class="card hidden"><h2>Attendance</h2><div id="att-data">Loading...</div></div>
+    <div id="tab-rate" class="card hidden"><h2>Ratings</h2><div id="rate-data">Loading...</div></div>
+    <div id="tab-audit" class="card hidden"><h2>Audit Logs</h2><div id="audit-data">Loading...</div></div>
+    <div id="tab-keys" class="card hidden"><div style="display:flex;justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">API Keys</h2><button class="btn btn-blue" onclick="createKey()">+ Generate</button></div><div id="keys-data">Loading...</div></div>
   </div>
 </div>
 
-<!-- ADD TL MODAL -->
 <div id="tl-modal" class="modal-bg">
-  <div class="card" style="width:380px">
-    <h2>Add Team Lead</h2>
+  <div class="card" style="width:380px"><h2>Add Team Lead</h2>
     <div class="form-group"><label>Name</label><input type="text" id="tl-name"></div>
     <div class="form-group"><label>Email</label><input type="email" id="tl-email"></div>
     <div class="form-group"><label>Password</label><input type="password" id="tl-password"></div>
     <div class="form-group"><label>Department</label><input type="text" id="tl-dept"></div>
     <button class="btn btn-green" onclick="addTL()">Create</button>
-    <button class="btn btn-gray" onclick="closeTLModal()" style="margin-left:8px">Cancel</button>
+    <button class="btn btn-gray" onclick="closeTL()" style="margin-left:8px">Cancel</button>
   </div>
 </div>
 
@@ -162,10 +139,11 @@ th { background: #f1f5f9; color: #64748b; font-size: 11px; text-transform: upper
 var API = '/api/v1';
 var user = null;
 
-function api(method, path, body) {
-  var opts = { method: method, credentials: 'include' };
+async function api(method, path, body) {
+  var opts = { method: method, credentials: 'include' as RequestCredentials };
   if (body) { opts.headers = { 'Content-Type': 'application/json' }; opts.body = JSON.stringify(body); }
-  return fetch(API + path, opts).then(function(r) { return r.json(); });
+  var res = await fetch(API + path, opts);
+  return res.json();
 }
 
 function showLogin() {
@@ -185,22 +163,29 @@ function showDash() {
 }
 
 async function doLogin() {
-  var data = await api('POST', '/auth/login', { email: document.getElementById('login-email').value, password: document.getElementById('login-password').value });
+  var data = await api('POST', '/auth/login', {
+    email: document.getElementById('login-email').value,
+    password: document.getElementById('login-password').value
+  });
   if (data.success) {
     user = data.data.user;
-    document.getElementById('nav-area').innerHTML = '<span>' + user.email + '</span> <a onclick="doLogout()">Logout</a>';
+    document.getElementById('nav-area').innerHTML = '<span style="color:white">' + user.email + ' (' + user.role + ')</span> <a onclick="doLogout()">Logout</a>';
     showDash(); loadAll();
   } else { document.getElementById('login-err').textContent = data.message || 'Login failed'; }
 }
 
 async function doRegister() {
-  var data = await api('POST', '/auth/register', { name: document.getElementById('reg-name').value, email: document.getElementById('reg-email').value, password: document.getElementById('reg-password').value });
-  if (data.success) { alert('Account created! Please login.'); showLogin(); }
+  var data = await api('POST', '/auth/register', {
+    name: document.getElementById('reg-name').value,
+    email: document.getElementById('reg-email').value,
+    password: document.getElementById('reg-password').value
+  });
+  if (data.success) { alert('Registered! Login now.'); showLogin(); }
   else { alert(data.message || 'Failed'); }
 }
 
 async function doLogout() {
-  await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' });
+  await api('POST', '/auth/logout');
   user = null; document.getElementById('nav-area').innerHTML = '<a onclick="showLogin()">Login</a>';
   showLogin();
 }
@@ -211,82 +196,86 @@ function switchTab(tab) {
   ['tls','att','rate','audit','keys'].forEach(function(t) { document.getElementById('tab-'+t).classList.add('hidden'); });
   document.getElementById('tab-'+tab).classList.remove('hidden');
   if (tab === 'tls') loadTLs();
-  if (tab === 'att') loadAttendance();
-  if (tab === 'rate') loadRatings();
+  if (tab === 'att') loadAtt();
+  if (tab === 'rate') loadRate();
   if (tab === 'audit') loadAudit();
   if (tab === 'keys') loadKeys();
 }
 
 async function loadAll() {
-  var tls = await api('GET', '/tls');
-  document.getElementById('s-tls').textContent = tls.data ? tls.data.length : 0;
-  var att = await api('GET', '/attendance/my');
-  document.getElementById('s-att').textContent = att.data ? att.data.length : 0;
-  var rate = await api('GET', '/ratings/my');
-  document.getElementById('s-rate').textContent = rate.data ? rate.data.length : 0;
+  var t = await api('GET', '/tls'); document.getElementById('s-tls').textContent = (t.data||[]).length;
+  var a = await api('GET', '/attendance/my'); document.getElementById('s-att').textContent = (a.data||[]).length;
+  var r = await api('GET', '/ratings/my'); document.getElementById('s-rate').textContent = (r.data||[]).length;
   loadTLs();
 }
 
-function table(rows, cols) {
+function tbl(rows, cols) {
   var h = '<table><tr>';
   cols.forEach(function(c) { h += '<th>' + c + '</th>'; });
   h += '</tr>';
-  if (!rows || rows.length === 0) { h += '<tr><td colspan="' + cols.length + '" class="empty">No data</td></tr>'; }
-  else { rows.forEach(function(r) { h += '<tr>'; cols.forEach(function(c) { h += '<td>' + (r[c] !== undefined ? r[c] : '-') + '</td>'; }); h += '</tr>'; }); }
+  if (!rows || rows.length === 0) h += '<tr><td colspan="' + cols.length + '" class="empty">No data</td></tr>';
+  else rows.forEach(function(r) { h += '<tr>'; cols.forEach(function(c) { h += '<td>' + (r[c]||'-') + '</td>'; }); h += '</tr>'; });
   h += '</table>';
   return h;
 }
 
 async function loadTLs() {
   var d = await api('GET', '/tls');
-  var rows = (d.data || []).map(function(t) { return { id: t.id, name: t.name, email: t.email, dept: t.department || '-', status: t.is_active ? '<span class="badge bg-green">Active</span>' : '<span class="badge bg-red">Inactive</span>' }; });
-  document.getElementById('tls-data').innerHTML = table(rows, ['id','name','email','dept','status']);
+  var rows = (d.data||[]).map(function(t) { return { id: t.id, name: t.name, email: t.email, dept: t.department||'-', status: t.is_active?'<span class="badge bg-green">Active</span>':'<span class="badge bg-red">Inactive</span>' }; });
+  document.getElementById('tls-data').innerHTML = tbl(rows, ['id','name','email','dept','status']);
 }
 
-async function loadAttendance() {
+async function loadAtt() {
   var d = await api('GET', '/attendance/my');
-  var rows = (d.data || []).map(function(a) { return { date: new Date(a.date).toLocaleDateString(), status: a.status, late: a.is_late ? '<span class="badge bg-yellow">Late</span>' : '<span class="badge bg-green">On Time</span>' }; });
-  document.getElementById('att-data').innerHTML = table(rows, ['date','status','late']);
+  var rows = (d.data||[]).map(function(a) { return { date: new Date(a.date).toLocaleDateString(), status: a.status, late: a.is_late?'<span class="badge bg-yellow">Late</span>':'<span class="badge bg-green">On Time</span>' }; });
+  document.getElementById('att-data').innerHTML = tbl(rows, ['date','status','late']);
 }
 
-async function loadRatings() {
+async function loadRate() {
   var d = await api('GET', '/ratings/my');
-  var rows = (d.data || []).map(function(r) { return { month: r.month, score: r.score + '/10' }; });
-  document.getElementById('rate-data').innerHTML = table(rows, ['month','score']);
+  var rows = (d.data||[]).map(function(r) { return { month: r.month, score: r.score+'/10' }; });
+  document.getElementById('rate-data').innerHTML = tbl(rows, ['month','score']);
 }
 
 async function loadAudit() {
   var d = await api('GET', '/audit/logs');
-  var rows = (d.data || []).slice(0, 50).map(function(a) { return { action: a.action, resource: a.resource, detail: (a.detail || '').substring(0, 60), time: new Date(a.created_at).toLocaleString() }; });
-  document.getElementById('audit-data').innerHTML = table(rows, ['action','resource','detail','time']);
+  var rows = (d.data||[]).slice(0,50).map(function(a) { return { action: a.action, resource: a.resource, detail: (a.detail||'').substring(0,60), time: new Date(a.created_at).toLocaleString() }; });
+  document.getElementById('audit-data').innerHTML = tbl(rows, ['action','resource','detail','time']);
 }
 
 async function loadKeys() {
   var d = await api('GET', '/api-keys');
-  var rows = (d.data || []).map(function(k) { return { name: k.name, prefix: k.prefix, scopes: k.scopes, status: k.is_active ? '<span class="badge bg-green">Active</span>' : '<span class="badge bg-red">Revoked</span>' }; });
-  document.getElementById('keys-data').innerHTML = table(rows, ['name','prefix','scopes','status']);
+  var rows = (d.data||[]).map(function(k) { return { name: k.name, prefix: k.prefix, scopes: k.scopes, status: k.is_active?'<span class="badge bg-green">Active</span>':'<span class="badge bg-red">Revoked</span>' }; });
+  document.getElementById('keys-data').innerHTML = tbl(rows, ['name','prefix','scopes','status']);
 }
 
 async function markAtt() {
   var data = await api('POST', '/attendance/mark', { status: document.getElementById('att-status').value });
-  var el = document.getElementById('att-msg');
-  el.innerHTML = data.success ? '<div class="alert alert-ok">Marked!</div>' : '<div class="alert alert-err">' + data.message + '</div>';
-  if (data.success) { loadAttendance(); loadAll(); }
+  document.getElementById('att-msg').innerHTML = data.success ? '<div class="alert alert-ok">Marked!</div>' : '<div class="alert alert-err">' + data.message + '</div>';
+  if (data.success) { loadAtt(); loadAll(); }
 }
 
 async function doRating() {
-  var data = await api('POST', '/ratings', { userId: document.getElementById('rate-emp').value, month: document.getElementById('rate-month').value, score: parseInt(document.getElementById('rate-score').value) });
-  var el = document.getElementById('rate-msg');
-  el.innerHTML = data.success ? '<div class="alert alert-ok">Rated!</div>' : '<div class="alert alert-err">' + data.message + '</div>';
-  if (data.success) { loadRatings(); loadAll(); }
+  var data = await api('POST', '/ratings', {
+    userId: document.getElementById('rate-emp').value,
+    month: document.getElementById('rate-month').value,
+    score: parseInt(document.getElementById('rate-score').value)
+  });
+  document.getElementById('rate-msg').innerHTML = data.success ? '<div class="alert alert-ok">Rated!</div>' : '<div class="alert alert-err">' + (data.message || 'Error') + '</div>';
+  if (data.success) { loadRate(); loadAll(); }
 }
 
-function openTLModal() { document.getElementById('tl-modal').classList.add('show'); }
-function closeTLModal() { document.getElementById('tl-modal').classList.remove('show'); }
+function openTL() { document.getElementById('tl-modal').classList.add('show'); }
+function closeTL() { document.getElementById('tl-modal').classList.remove('show'); }
 
 async function addTL() {
-  var data = await api('POST', '/tls', { name: document.getElementById('tl-name').value, email: document.getElementById('tl-email').value, password: document.getElementById('tl-password').value, department: document.getElementById('tl-dept').value });
-  if (data.success) { closeTLModal(); loadTLs(); loadAll(); }
+  var data = await api('POST', '/tls', {
+    name: document.getElementById('tl-name').value,
+    email: document.getElementById('tl-email').value,
+    password: document.getElementById('tl-password').value,
+    department: document.getElementById('tl-dept').value
+  });
+  if (data.success) { closeTL(); loadTLs(); loadAll(); }
   else { alert(data.message || 'Failed'); }
 }
 
@@ -294,7 +283,7 @@ async function createKey() {
   var name = prompt('Key name:', 'My Key');
   if (!name) return;
   var data = await api('POST', '/api-keys', { name: name, scopes: 'read,write' });
-  if (data.success) { alert('Key: ' + data.data.key + '\nSave this - it wont be shown again.'); loadKeys(); }
+  if (data.success) { alert('Key: ' + data.data.key); loadKeys(); }
 }
 
 showLogin();
