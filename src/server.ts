@@ -1,7 +1,4 @@
 ﻿import Fastify from 'fastify';
-import fastifyStatic from '@fastify/static';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
@@ -16,33 +13,29 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { mfaRoutes } from './modules/mfa/mfa.routes.js';
 import { apiKeyRoutes } from './modules/apikeys/apikeys.routes.js';
+import { canaryRoutes } from './modules/canary/canary.routes.js';
 import { tlRoutes } from './modules/tl/tl.routes.js';
 import { attendanceRoutes } from './modules/attendance/attendance.routes.js';
 import { ratingsRoutes } from './modules/ratings/ratings.routes.js';
-import { canaryRoutes } from './modules/canary/canary.routes.js';
 import { auditRoutes } from './modules/audit/audit.routes.js';
 
-var __filename = fileURLToPath(import.meta.url);
-var __dirname = path.dirname(__filename);
-
 async function buildApp() {
-  var app = Fastify({ logger: { level: 'debug', transport: { target: 'pino-pretty' } } });
-  await app.register(fastifyStatic, { root: path.join(__dirname, '..', 'public'), prefix: '/' });
+  var app = Fastify({ logger: { level: 'info', transport: { target: 'pino-pretty' } } });
   await app.register(helmet, { contentSecurityPolicy: false });
   await app.register(cors, { origin: true, credentials: true });
   await app.register(rateLimit, { max: 200, timeWindow: '1 minute' });
   await app.register(cookie, { secret: config.CSRF_SECRET });
-  await app.register(swagger, { openapi: { info: { title: 'TL Management API', version: '4.0.0' } } });
-  await app.register(swaggerUi, { routePrefix: '/docs' });
+  await app.register(swagger, { openapi: { info: { title: 'TL Management API', version: '5.0.0', description: 'Enterprise Backend with Military-Grade Security' } } });
+  await app.register(swaggerUi, { routePrefix: '/' });
   app.setErrorHandler(errorHandler);
 
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
   await app.register(mfaRoutes, { prefix: '/api/v1/mfa' });
   await app.register(apiKeyRoutes, { prefix: '/api/v1/api-keys' });
+  await app.register(canaryRoutes, { prefix: '/api/v1/canary' });
   await app.register(tlRoutes, { prefix: '/api/v1/tls' });
   await app.register(attendanceRoutes, { prefix: '/api/v1/attendance' });
   await app.register(ratingsRoutes, { prefix: '/api/v1/ratings' });
-  await app.register(canaryRoutes, { prefix: '/api/v1/canary' });
   await app.register(auditRoutes, { prefix: '/api/v1/audit' });
 
   app.get('/api/v1/health', async function() {
@@ -58,8 +51,7 @@ async function buildApp() {
 
 async function start() {
   var app = await buildApp();
-  try { await app.listen({ port: config.PORT, host: '0.0.0.0' }); console.log('Server: http://localhost:' + config.PORT); }
+  try { await app.listen({ port: config.PORT, host: '0.0.0.0' }); console.log('API Server: http://localhost:' + config.PORT); }
   catch(err) { console.error(err); process.exit(1); }
 }
 start();
-
